@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">TAKE_LastFM</string>
+    <string name="app_name">TAKE LastFM</string>
     <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="instruction_en">Only for TAKE LTE. Install \'Simple Last.fm scrobbler\' to utilize this application. This app doesn\'t scrobble at all, but helps Simple Last.FM scrobbler.</string>
+    <string name="instruction_ko">테이크 LTE용입니다. Simple Last.fm scrobbler를 설치한 후 설정하시기 바랍니다. 이 어플리케이션은 Last.fm에 직접 데이터를 보내지 않습니다.</string>
+    <string name="author">Written by Nidev Plontra</string>
+    
 
 </resources>
