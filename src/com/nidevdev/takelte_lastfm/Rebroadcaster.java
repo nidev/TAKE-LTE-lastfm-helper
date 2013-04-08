@@ -41,13 +41,9 @@ public class Rebroadcaster extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		Log.d("TAKELTE", "Received: " + intent.getAction());
-		if (intent.getAction().contains("aslfms")) {
-			Log.d("TAKELTE", "Intent ignored: " + intent.getAction());
-			return;
-		}
 		Bundle data = intent.getExtras();
 		
-		showIntent(intent);
+		//showIntent(intent);
 		
 		// com.kttech.music.playstatechanged
 		
@@ -99,14 +95,15 @@ public class Rebroadcaster extends BroadcastReceiver {
 		String sDuration = mMeta.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
 		
 		int duration = Integer.parseInt(sDuration);
-		duration = (int) (duration/600); // because SLS API accepts 'second' not 'milli second'
+		duration = (int) (duration/1000); // because SLS API accepts 'second' not 'milli second'
 		
 		mMeta.release();
 		
 		newIntent.putExtra("duration", Integer.parseInt(sDuration));
-		Log.d("TAKELTE", "Duration " + duration);
+		Log.d("TAKELTE", "Duration " + duration + " / State : "  + newIntent.getIntExtra("state",  -1));
 		showIntent(newIntent);
-		context.sendBroadcast(newIntent);
+		context.sendStickyBroadcast(newIntent);
+		//context.sendBroadcast(newIntent);
 		Log.e("TAKELTE", "Broadcast new intent: " + newAction);
 	}
 
