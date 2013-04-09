@@ -4,9 +4,12 @@ import java.util.Set;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 
 
@@ -31,6 +34,8 @@ public class Rebroadcaster extends BroadcastReceiver {
 	final static int PAUSE = 2;
 	final static int COMPLETE = 3;
 	
+	final static String LAST_SONG = "com.nidevdev.takelte_lastfm.STORAGE";
+	
 	public void showIntent(Intent intent) {
 		Bundle data = intent.getExtras();
 		Set<String> keys = data.keySet();
@@ -41,6 +46,9 @@ public class Rebroadcaster extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		Log.d("TAKELTE", "Received: " + intent.getAction());
+		SharedPreferences previousSong = context.getSharedPreferences(LAST_SONG, Context.MODE_PRIVATE);
+		Editor changes = previousSong.edit();
+		
 		Bundle data = intent.getExtras();
 		
 		//showIntent(intent);
@@ -65,6 +73,9 @@ public class Rebroadcaster extends BroadcastReceiver {
 		 * 
 		 * (implemented) duration <- sh*t. TAKE LTE doesn't provide this. need to get it manually.
 		 * 
+		 * 
+		 * XXX: TAKE LTE player, doesn't send intent having action 'com.kttech.music.playbackcomplete'
+		 * It would be generated with unnatural way.
 		 */
 		newIntent.putExtra("artist", data.getString("artist", "-"));
 		newIntent.putExtra("album", data.getString("album", "-"));
@@ -72,8 +83,31 @@ public class Rebroadcaster extends BroadcastReceiver {
 		
 		newIntent.putExtra("app-name",  "Take LTE Music Player");
 		newIntent.putExtra("app-package", "com.nidevdev.takelte_lastfm");
-		if (intent.getAction().contains("playcomplete")) {
-			newIntent.putExtra("state", COMPLETE);
+		if (intent.getAction().contains("metachanged")) {
+			newIntent.putExtra("state", START);
+
+			// 	restore previous playing info and destroy them
+			Intent prevsongIntent = new Intent();
+			prevsongIntent.setAction(newAction);
+			String prevArtist = previousSong.getString("artist", "-");
+			String prevTrack = previousSong.getString("track",  "-");
+			String prevAlbum = previousSong.getString("track", "-");
+			int prevDuration = previousSong.getInt("duration", 0);
+			
+			prevsongIntent.putExtra("artist", prevArtist);
+			prevsongIntent.putExtra("album", prevAlbum);
+			prevsongIntent.putExtra("track", prevTrack);
+			prevsongIntent.putExtra("duration", prevDuration);
+			prevsongIntent.putExtra("app-name",  "Take LTE Music Player");
+			prevsongIntent.putExtra("app-package", "com.nidevdev.takelte_lastfm");
+			prevsongIntent.putExtra("state", COMPLETE);
+			context.sendStickyBroadcast(prevsongIntent);
+			showIntent(prevsongIntent);
+			Log.e("TAKELTE", "Unnatural COMPLETE of song");
+			Log.e("TAKELTE", "Broadcast new intent: " + newAction);
+			// .... and let the app send new song intent after exiting this code
+			// So, on 'metachanged' intent, this class broadcasts two intents.
+			// One for previously played song, the other one for currently and newly played song. 
 		}
 		else {
 			if (data.getBoolean("isplaying", false)) {
@@ -98,10 +132,19 @@ public class Rebroadcaster extends BroadcastReceiver {
 		duration = (int) (duration/1000); // because SLS API accepts 'second' not 'milli second'
 		
 		mMeta.release();
+
+		// Save curret song info.
+		changes.putString("artist", data.getString("artist", "-"));
+		changes.putString("track", data.getString("track", "-"));
+		changes.putString("album", data.getString("album", "-"));
+		changes.putInt("duration", duration);
+		changes.putLong("lastplay", SystemClock.elapsedRealtime());
+		changes.commit();
+		
 		
 		newIntent.putExtra("duration", Integer.parseInt(sDuration));
 		Log.d("TAKELTE", "Duration " + duration + " / State : "  + newIntent.getIntExtra("state",  -1));
-		showIntent(newIntent);
+		showIntent(intent);
 		context.sendStickyBroadcast(newIntent);
 		//context.sendBroadcast(newIntent);
 		Log.e("TAKELTE", "Broadcast new intent: " + newAction);

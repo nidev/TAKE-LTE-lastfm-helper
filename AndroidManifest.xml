@@ -24,15 +24,12 @@
             </intent-filter>
         </activity>
         <receiver android:name="com.nidevdev.takelte_lastfm.Rebroadcaster" android:enabled="true">
-            <intent-filter>
-                <action android:name="com.kttech.music.playstatechanged"/>
+            <intent-filter><action android:name="com.kttech.music.playbackcomplete" /><action android:name="com.kttech.music.playstatechanged"/>
                 <action android:name="com.kttech.music.metachanged"/>
-                <action android:name="com.kttech.music.playbackcomplete"/>
-                <action android:name="com.kttech.music.playbackcompleted"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-                <category android:name="android.intent.category.APP_MUSIC"/>
-                <action android:name="com.android.music.playbackcomplete"/>
+                
+                
+                <action android:name="com.kttech.music.queuechanged"/>
+                <action android:name="com.kttech.music.destroyed"/>
             </intent-filter>
         </receiver>
     </application>
