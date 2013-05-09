@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
+import android.widget.Toast;
 
 
 // Reference: http://code.google.com/p/a-simple-lastfm-scrobbler/wiki/Developers#When_to_send
@@ -43,6 +44,11 @@ public class Rebroadcaster extends BroadcastReceiver {
 			Log.d("TAKELTE", "Key: " + s);
 		}
 	}
+	
+	public void saveCurrentSong(Context context) {
+		
+	}
+	
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		Log.d("TAKELTE", "Received: " + intent.getAction());
@@ -52,7 +58,7 @@ public class Rebroadcaster extends BroadcastReceiver {
 		Bundle data = intent.getExtras();
 		
 		//showIntent(intent);
-		
+		// 음악 이어폰 빼서 정지시 알림이 그대로 남음
 		// com.kttech.music.playstatechanged
 		
 		String newAction = "com.adam.aslfms.notify.playstatechanged"; // SLS API
@@ -101,7 +107,7 @@ public class Rebroadcaster extends BroadcastReceiver {
 			prevsongIntent.putExtra("app-name",  "Take LTE Music Player");
 			prevsongIntent.putExtra("app-package", "com.nidevdev.takelte_lastfm");
 			prevsongIntent.putExtra("state", COMPLETE);
-			context.sendStickyBroadcast(prevsongIntent);
+			context.sendBroadcast(prevsongIntent);
 			showIntent(prevsongIntent);
 			Log.e("TAKELTE", "Unnatural COMPLETE of song");
 			Log.e("TAKELTE", "Broadcast new intent: " + newAction);
@@ -123,17 +129,26 @@ public class Rebroadcaster extends BroadcastReceiver {
 			}
 		}
 		
-		MediaMetadataRetriever mMeta = new MediaMetadataRetriever();
-		Uri uri = Uri.parse(data.getString("path"));
-		mMeta.setDataSource(context, uri);
-		String sDuration = mMeta.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+		int duration = 0;
+		try
+		{
+			MediaMetadataRetriever mMeta = new MediaMetadataRetriever();
+			Uri uri = Uri.parse(data.getString("path"));
+			mMeta.setDataSource(context, uri);
+			String sDuration = mMeta.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+			
+			duration = Integer.parseInt(sDuration);
+			duration = (int) (duration/1000); // because SLS API accepts 'second' not 'milli second'
+			mMeta.release();
+		}
+		catch (Exception e)
+		{
+			Toast.makeText(context, "TAKELTE_LastFM Exception: " + e.toString(), Toast.LENGTH_LONG).show();
+			return;
+		}
 		
-		int duration = Integer.parseInt(sDuration);
-		duration = (int) (duration/1000); // because SLS API accepts 'second' not 'milli second'
-		
-		mMeta.release();
 
-		// Save curret song info.
+		// Save current song info.
 		changes.putString("artist", data.getString("artist", "-"));
 		changes.putString("track", data.getString("track", "-"));
 		changes.putString("album", data.getString("album", "-"));
@@ -142,11 +157,9 @@ public class Rebroadcaster extends BroadcastReceiver {
 		changes.commit();
 		
 		
-		newIntent.putExtra("duration", Integer.parseInt(sDuration));
-		Log.d("TAKELTE", "Duration " + duration + " / State : "  + newIntent.getIntExtra("state",  -1));
-		showIntent(intent);
-		context.sendStickyBroadcast(newIntent);
-		//context.sendBroadcast(newIntent);
+		newIntent.putExtra("duration", duration);
+		//showIntent(intent);
+		context.sendBroadcast(newIntent);
 		Log.e("TAKELTE", "Broadcast new intent: " + newAction);
 	}
 
