@@ -1,3 +1,5 @@
 
 syntax: regexp
 ^bin$
+syntax: regexp
+^TAKE_LastFM\.apk$
