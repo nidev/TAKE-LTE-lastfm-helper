@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.nidevdev.takelte_lastfm"
-    android:versionCode="2"
-    android:versionName="1.0r1" >
+    android:versionCode="3"
+    android:versionName="1.1" >
 
     <uses-sdk
         android:minSdkVersion="16"
         android:targetSdkVersion="16" />
-    <uses-permission android:name="android.permission.BROADCAST_STICKY"/>
+
+    <uses-permission android:name="android.permission.BROADCAST_STICKY" />
 
     <application
         android:allowBackup="true"
@@ -16,18 +17,26 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.nidevdev.takelte_lastfm.MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/title_activity_main" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name="com.nidevdev.takelte_lastfm.Rebroadcaster" android:enabled="true">
-            <intent-filter><action android:name="com.kttech.music.playbackcomplete" /><action android:name="com.kttech.music.playstatechanged"/>
-                <action android:name="com.kttech.music.metachanged"/>
+
+        <activity android:name="com.nidevdev.takelte_lastfm.About" android:label="@string/title_activity_about" android:theme="@android:style/Theme.DeviceDefault.Dialog">
+        </activity><receiver
+            android:name="com.nidevdev.takelte_lastfm.Rebroadcaster"
+            android:enabled="true" >
+            <intent-filter>
+                <action android:name="com.kttech.music.playbackcomplete" />
+                <action android:name="com.kttech.music.playstatechanged" />
+                <action android:name="com.kttech.music.metachanged" />
             </intent-filter>
         </receiver>
+
+        
     </application>
 
 </manifest>

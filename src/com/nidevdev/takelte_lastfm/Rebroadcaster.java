@@ -1,6 +1,9 @@
 package com.nidevdev.takelte_lastfm;
 import java.util.Set;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +14,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
-import android.widget.Toast;
 
 
 // Reference: http://code.google.com/p/a-simple-lastfm-scrobbler/wiki/Developers#When_to_send
@@ -37,6 +39,8 @@ public class Rebroadcaster extends BroadcastReceiver {
 	
 	final static String LAST_SONG = "com.nidevdev.takelte_lastfm.STORAGE";
 	
+	final private int NOTIFICATION_ID = 10010;
+	
 	public void showIntent(Intent intent) {
 		Bundle data = intent.getExtras();
 		Set<String> keys = data.keySet();
@@ -45,8 +49,30 @@ public class Rebroadcaster extends BroadcastReceiver {
 		}
 	}
 	
-	public void saveCurrentSong(Context context) {
+	public void sendNotification(Context context)
+	{
+		NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 		
+		PendingIntent launchApplication = PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class), 0);
+		
+		Notification.Builder notifier = new Notification.Builder(context);
+		notifier.setTicker(context.getText(R.string.notify_title));
+		notifier.setContentTitle(context.getText(R.string.notify_title));
+		notifier.setContentText(context.getText(R.string.notify_contents));
+		notifier.setAutoCancel(true);
+		notifier.setSmallIcon(R.drawable.ic_launcher);
+		notifier.setWhen(System.currentTimeMillis());
+		notifier.setContentIntent(launchApplication);
+		Notification notice = notifier.build();
+		
+		manager.notify(NOTIFICATION_ID, notice);
+		
+	}
+	
+	public void clearNotification(Context context)
+	{
+		NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+		manager.cancel(NOTIFICATION_ID);
 	}
 	
 	@Override
@@ -108,8 +134,7 @@ public class Rebroadcaster extends BroadcastReceiver {
 			prevsongIntent.putExtra("app-package", "com.nidevdev.takelte_lastfm");
 			prevsongIntent.putExtra("state", COMPLETE);
 			context.sendBroadcast(prevsongIntent);
-			showIntent(prevsongIntent);
-			Log.e("TAKELTE", "Unnatural COMPLETE of song");
+			Log.e("TAKELTE", "Intercepted. changed to new song");
 			Log.e("TAKELTE", "Broadcast new intent: " + newAction);
 			// .... and let the app send new song intent after exiting this code
 			// So, on 'metachanged' intent, this class broadcasts two intents.
@@ -126,41 +151,49 @@ public class Rebroadcaster extends BroadcastReceiver {
 			}
 			else {
 				newIntent.putExtra("state", PAUSE);
+
 			}
+			// If it's not being played.
+			clearNotification(context);
 		}
 		
 		int duration = 0;
+		MediaMetadataRetriever mMeta = new MediaMetadataRetriever();
 		try
 		{
-			MediaMetadataRetriever mMeta = new MediaMetadataRetriever();
 			Uri uri = Uri.parse(data.getString("path"));
 			mMeta.setDataSource(context, uri);
 			String sDuration = mMeta.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
 			
 			duration = Integer.parseInt(sDuration);
 			duration = (int) (duration/1000); // because SLS API accepts 'second' not 'milli second'
+		}
+		catch (NullPointerException e)
+		{
+			duration = -1;
+		}
+		finally
+		{
 			mMeta.release();
 		}
-		catch (Exception e)
+		
+		if (duration > 0)
 		{
-			Toast.makeText(context, "TAKELTE_LastFM Exception: " + e.toString(), Toast.LENGTH_LONG).show();
-			return;
+			// Save current song info.
+			changes.putString("artist", data.getString("artist", "-"));
+			changes.putString("track", data.getString("track", "-"));
+			changes.putString("album", data.getString("album", "-"));
+			changes.putInt("duration", duration);
+			changes.putLong("lastplay", SystemClock.elapsedRealtime());
+			changes.commit();
+			
+			newIntent.putExtra("duration", duration);
+			//showIntent(intent);
+			context.sendBroadcast(newIntent);
+			Log.e("TAKELTE", "Broadcast new intent: " + newAction);
+			
+			// send notification
+			sendNotification(context);
 		}
-		
-
-		// Save current song info.
-		changes.putString("artist", data.getString("artist", "-"));
-		changes.putString("track", data.getString("track", "-"));
-		changes.putString("album", data.getString("album", "-"));
-		changes.putInt("duration", duration);
-		changes.putLong("lastplay", SystemClock.elapsedRealtime());
-		changes.commit();
-		
-		
-		newIntent.putExtra("duration", duration);
-		//showIntent(intent);
-		context.sendBroadcast(newIntent);
-		Log.e("TAKELTE", "Broadcast new intent: " + newAction);
 	}
-
 }
