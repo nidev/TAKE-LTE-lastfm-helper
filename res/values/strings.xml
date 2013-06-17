@@ -1,11 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">TAKE LastFM</string>
-    <string name="action_settings">Settings</string>
-    <string name="instruction_en">Only for TAKE LTE with stock music player. Install \'Simple Last.fm Scrobbler\' or \'Last.fm\' to utilize this application. This app doesn\'t scrobble at all, but helps Scrobblers to work with stock player.</string>
-    <string name="instruction_ko">테이크 LTE에 기본 내장된 음악 앱을 위한 플러그인입니다. Simple Last.fm scrobbler이나 Last.fm 앱을 설치한 후 이용하시기 바랍니다. 이 플러그인은 SLS API를 지원하는 앱을 보조하기 위한 것입니다. 따라서, Last.fm에 직접 데이터를 보내지 않습니다.</string>
-    <string name="author">Written by Nidev Plontra</string>
+    <string name="app_name">TAKE LTE LastFM</string>
+    <string name="version_code">v1.1</string>
+    <string name="title_activity_main">TAKE LTE Last.FM</string>
+    <string name="title_activity_about">About this app</string>
+    <string name="about_this_app">Only for TAKE LTE with stock music player. Install \'Simple Last.fm Scrobbler\' or \'Last.fm\' to utilize this application. This app doesn\'t scrobble anything, but helps Scrobblers to work with stock player.</string>
+    
+    <string name="main_textview_recent_play_title">Last/current song</string>
+    <string name="main_textview_recent_artist">(artist)</string>
+    <string name="main_textview_recent_title">(title)</string>
+    <string name="main_textview_recent_album">(album)</string>
+    <string name="main_textview_preview_title">NowPlaying preview</string>
+    <string name="main_button_go_to_about">Show About</string>
+    <string name="main_button_share_this_song">Share NowPlaying</string>
+    
+    <string name="notify_title">New song information</string>
+    <string name="notify_contents">Touch to share your song to friends!</string>
+    
     
 
 </resources>
