@@ -153,8 +153,6 @@ public class Rebroadcaster extends BroadcastReceiver {
 				newIntent.putExtra("state", PAUSE);
 
 			}
-			// If it's not being played.
-			clearNotification(context);
 		}
 		
 		int duration = 0;
@@ -192,8 +190,17 @@ public class Rebroadcaster extends BroadcastReceiver {
 			context.sendBroadcast(newIntent);
 			Log.e("TAKELTE", "Broadcast new intent: " + newAction);
 			
+
+		}
+		if (newIntent.getIntExtra("state", -1) == START||newIntent.getIntExtra("state", -1) == RESUME)
+		{
 			// send notification
 			sendNotification(context);
+		}
+		else
+		{
+			// If it's not being played.
+			clearNotification(context);
 		}
 	}
 }
