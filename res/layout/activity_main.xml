@@ -89,13 +89,27 @@
         <requestFocus />
     </EditText>
 
-    <TextView
-        android:id="@+id/main_textview_preview_title"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/main_edittext_preview"
         android:layout_alignLeft="@+id/main_edittext_preview"
-        android:text="@string/main_textview_preview_title"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:layout_alignRight="@+id/main_edittext_preview" >
+
+        <TextView
+            android:id="@+id/main_textview_preview_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/main_textview_preview_title"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/main_textview_preview_length"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/nowplaying_length_format"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    </LinearLayout>
 
 </RelativeLayout>
