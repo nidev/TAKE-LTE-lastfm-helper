@@ -18,11 +18,11 @@ public class MainActivity extends Activity implements OnClickListener {
 	public String getNowPlaying()
 	{
 		SharedPreferences songinfo = getSharedPreferences(Rebroadcaster.LAST_SONG, MODE_PRIVATE);
-		String artist = songinfo.getString("artist", "(unknown)");
-		String title = songinfo.getString("track",  "(unknown)");
-		String base = "#NowPlaying [ " + artist + " - " + title + " ] from #TAKE_LTE";
-		return base;
-		
+		String base = getString(R.string.nowplaying_format);
+		return String.format(base,
+				songinfo.getString("artist", "(unknown)"),
+				songinfo.getString("track",  "(unknown)"),
+				songinfo.getString("album",  "(unknown)"));
 	}
 	
 	public void updateMainScreen()
@@ -41,7 +41,9 @@ public class MainActivity extends Activity implements OnClickListener {
 		t_album.setText(album);
 		
 		EditText nowplaying_preview = (EditText) findViewById(R.id.main_edittext_preview);
+		TextView nowplaying_preview_length = (TextView) findViewById(R.id.main_textview_preview_length);
 		nowplaying_preview.setText(getNowPlaying());
+		nowplaying_preview_length.setText(String.format(getString(R.string.nowplaying_length_format), getNowPlaying().length()));
 	}
 	
 	@Override
@@ -51,23 +53,6 @@ public class MainActivity extends Activity implements OnClickListener {
 		
 		((Button) findViewById(R.id.main_button_nowplaying)).setOnClickListener(this);
 		((Button) findViewById(R.id.main_button_about)).setOnClickListener(this);
-		
-		SharedPreferences songinfo = getSharedPreferences(Rebroadcaster.LAST_SONG, MODE_PRIVATE);
-		onUpdateListener = new OnSharedPreferenceChangeListener() {
-			
-			@Override
-			public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
-					String key) {
-				// TODO Auto-generated method stub
-				updateMainScreen();
-			}
-		};
-		
-		// on update of status
-		songinfo.registerOnSharedPreferenceChangeListener(onUpdateListener);
-		
-		// last shot.
-		updateMainScreen();
 		
 	}
 	
@@ -94,7 +79,25 @@ public class MainActivity extends Activity implements OnClickListener {
 		}
 	}
 	
-	public void onDestory()
+	
+	public void installListener()
+	{
+		SharedPreferences songinfo = getSharedPreferences(Rebroadcaster.LAST_SONG, MODE_PRIVATE);
+		onUpdateListener = new OnSharedPreferenceChangeListener() {
+			
+			@Override
+			public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+					String key) {
+				// TODO Auto-generated method stub
+				updateMainScreen();
+			}
+		};
+		
+		// on update of status
+		songinfo.registerOnSharedPreferenceChangeListener(onUpdateListener);
+	}
+	
+	public void uninstallListener()
 	{
 		if (onUpdateListener != null)
 		{
@@ -102,6 +105,45 @@ public class MainActivity extends Activity implements OnClickListener {
 			SharedPreferences songinfo = getSharedPreferences(Rebroadcaster.LAST_SONG, MODE_PRIVATE);
 			songinfo.unregisterOnSharedPreferenceChangeListener(onUpdateListener);
 		}
+	}
+	public void onStart()
+	{
+		super.onStart();
+		installListener();
+		updateMainScreen();
+	}
+	
+	public void onResume()
+	{
+		super.onResume();
+		installListener();
+		updateMainScreen();
+	}
+	
+	/*
+	public void onRestart()
+	{
+		installListener();
+		updateMainScreen();
+	}
+	*/
+	
+	public void onPause()
+	{
+		uninstallListener();
+		super.onPause();
+	}
+	
+	public void onDestory()
+	{
+		uninstallListener();
+		super.onDestroy();
+	}
+	
+	public void onStop()
+	{
+		uninstallListener();
+		super.onStop();
 	}
 }
 

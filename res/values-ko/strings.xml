@@ -7,16 +7,19 @@
     <string name="title_activity_about">프로그램 정보</string>
     <string name="about_this_app">테이크 LTE에 기본 내장된 음악 앱을 위한 플러그인입니다. Simple Last.fm scrobbler이나 Last.fm 앱을 설치한 후 이용하시기 바랍니다. 이 플러그인은 SLS API를 지원하는 앱을 보조하기 위한 것입니다. 따라서, Last.fm에 직접 데이터를 보내지 않습니다.</string>
     
-    <string name="main_textview_recent_play_title">최근/현재 재생곡</string>
+    <string name="main_textview_recent_play_title">최근/현재 재생 곡</string>
     <string name="main_textview_recent_artist">(가수)</string>
     <string name="main_textview_recent_title">(제목)</string>
     <string name="main_textview_recent_album">(앨범)</string>
     <string name="main_textview_preview_title">NowPlaying 미리보기</string>
-    <string name="main_button_go_to_about">프로그램 정보</string>
+    <string name="main_button_go_to_about">어플리케이션 정보</string>
     <string name="main_button_share_this_song">NowPlaying 보내기</string>
     
     <string name="notify_title">새로운 NowPlaying을 공유할 수 있습니다.</string>
     <string name="notify_contents">터치하여 TAKE LTE LastFM 어플리케이션을 실행합니다.</string>
+    
+    <string name="nowplaying_format">#테이크LTE #지금듣는곡 %1$s - %2$s [%3$s]</string>
+    <string name="nowplaying_length_format">(%1$d자)</string>
     
     
 

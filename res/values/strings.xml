@@ -7,16 +7,18 @@
     <string name="title_activity_about">About this app</string>
     <string name="about_this_app">Only for TAKE LTE with stock music player. Install \'Simple Last.fm Scrobbler\' or \'Last.fm\' to utilize this application. This app doesn\'t scrobble anything, but helps Scrobblers to work with stock player.</string>
     
-    <string name="main_textview_recent_play_title">Last/current song</string>
+    <string name="main_textview_recent_play_title">Lately played song</string>
     <string name="main_textview_recent_artist">(artist)</string>
     <string name="main_textview_recent_title">(title)</string>
     <string name="main_textview_recent_album">(album)</string>
     <string name="main_textview_preview_title">NowPlaying preview</string>
-    <string name="main_button_go_to_about">Show About</string>
+    <string name="main_button_go_to_about">About</string>
     <string name="main_button_share_this_song">Share NowPlaying</string>
     
     <string name="notify_title">New song information</string>
     <string name="notify_contents">Touch to share your song to friends!</string>
+    <string name="nowplaying_format">#take_lte #nowplaying %1$s - %2$s [%3$s]</string>
+    <string name="nowplaying_length_format">(%1$d characters)</string>
     
     
 
