@@ -80,7 +80,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	}
 	
 	
-	public void installListener()
+	private void installListener()
 	{
 		SharedPreferences songinfo = getSharedPreferences(Rebroadcaster.LAST_SONG, MODE_PRIVATE);
 		onUpdateListener = new OnSharedPreferenceChangeListener() {
@@ -97,7 +97,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		songinfo.registerOnSharedPreferenceChangeListener(onUpdateListener);
 	}
 	
-	public void uninstallListener()
+	private void uninstallListener()
 	{
 		if (onUpdateListener != null)
 		{
